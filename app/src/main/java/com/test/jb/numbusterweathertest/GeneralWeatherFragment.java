@@ -1,5 +1,6 @@
 package com.test.jb.numbusterweathertest;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -12,10 +13,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.test.jb.numbusterweathertest.Network.WeatherResponseHandler;
+
+import java.util.List;
+
 /**
  * Created by JB on 17.09.2015.
  */
-public class GeneralWeatherFragment extends Fragment {
+public class GeneralWeatherFragment extends Fragment implements WeatherResponseHandler {
     private Context mContext;
     private RecyclerView weatherList;
     private EditText cityName;
@@ -46,5 +51,10 @@ public class GeneralWeatherFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+    }
+
+    @Override
+    public void responseHandling(List<ContentValues> data) {
+        
     }
 }
