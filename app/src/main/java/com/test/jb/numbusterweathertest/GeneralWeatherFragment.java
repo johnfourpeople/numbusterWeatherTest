@@ -61,6 +61,7 @@ public class GeneralWeatherFragment extends Fragment implements WeatherResponseH
 
         cityName = (EditText) view.findViewById(R.id.gw_city_name);
         addCity = (Button) view.findViewById(R.id.gw_add_city_button);
+        addCity.setOnClickListener(this);
     }
 
     @Override
@@ -153,7 +154,12 @@ public class GeneralWeatherFragment extends Fragment implements WeatherResponseH
 
     @Override
     public void onClick(View v) {
-
+        String name = cityName.getText().toString().trim();
+        if (!name.isEmpty()) {
+            mNetworkConnection = new AsyncWeatherConnection(name, this);
+            mNetworkConnection.execute();
+            cityName.setText("");
+        }
     }
 
     private class GeneralWeatherAdapter extends RecyclerView.Adapter<GeneralWeatherAdapter.ViewHolder> {
@@ -176,7 +182,6 @@ public class GeneralWeatherFragment extends Fragment implements WeatherResponseH
 
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
-            Log.d("binder","geted");
             if (mCursor != null) {
                 mCursor.moveToPosition(position);
                 holder.cityName.setText(mCursor.getString(mCursor.getColumnIndex(Contract.City.NAME)));
@@ -189,7 +194,6 @@ public class GeneralWeatherFragment extends Fragment implements WeatherResponseH
             if (mCursor == null ) {
                 return 0;
             }
-            Log.d("Cursor not null","count get");
             return mCursor.getCount();
         }
 
