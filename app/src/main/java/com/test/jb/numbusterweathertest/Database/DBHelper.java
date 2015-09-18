@@ -28,7 +28,7 @@ public class DBHelper extends SQLiteOpenHelper {
          );
 
         db.execSQL("CREATE TABLE " + Contract.City.TABLE + " ("
-                + Contract.City._ID + " INTEGER, PRIMARY KEY, "
+                + Contract.City._ID + " INTEGER PRIMARY KEY, "
                 + Contract.City.NAME + " TEXT" + ");"
         );
     }
