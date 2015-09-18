@@ -2,17 +2,16 @@ package com.test.jb.numbusterweathertest;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.database.Cursor;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v4.app.LoaderManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,8 +20,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.test.jb.numbusterweathertest.Database.Contract;
-import com.test.jb.numbusterweathertest.Network.AsyncWeatherConnection;
-import com.test.jb.numbusterweathertest.Network.WeatherResponseHandler;
+import com.test.jb.numbusterweathertest.Network.AsyncForecastConnection;
+import com.test.jb.numbusterweathertest.Network.ForecastResponseHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +29,7 @@ import java.util.List;
 /**
  * Created by JB on 17.09.2015.
  */
-public class GeneralWeatherFragment extends Fragment implements WeatherResponseHandler,
+public class GeneralWeatherFragment extends Fragment implements ForecastResponseHandler,
         LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener {
     private static final int WEATHER_LOADER = 0;
     private static final int CITY_LOADER = 1;
@@ -39,7 +38,7 @@ public class GeneralWeatherFragment extends Fragment implements WeatherResponseH
     private RecyclerView weatherList;
     private EditText cityName;
     private Button addCity;
-    private AsyncWeatherConnection mNetworkConnection;
+    private AsyncForecastConnection mNetworkConnection;
 
     @Override
     public void onAttach(Context context) {
@@ -78,26 +77,6 @@ public class GeneralWeatherFragment extends Fragment implements WeatherResponseH
 
         android.support.v4.app.LoaderManager loaderManager = getLoaderManager();
         loaderManager.initLoader(WEATHER_LOADER, null, this);
-    }
-
-    @Override
-    public void responseHandling(List<ContentValues> data) {
-        ContentValues cityValues = new ContentValues();
-        ContentValues weatherValues = new ContentValues();
-        for (ContentValues values : data) {
-            cityValues.clear();
-            weatherValues.clear();
-            cityValues.put(Contract.City.NAME, values.getAsString(Contract.City.NAME));
-            cityValues.put(Contract.City._ID, values.getAsInteger(Contract.City._ID));
-            weatherValues.put(Contract.Weather.TEMPERATURE, values.getAsInteger(Contract.Weather.TEMPERATURE));
-            weatherValues.put(Contract.Weather.DESCRIPTION, values.getAsString(Contract.Weather.DESCRIPTION));
-            weatherValues.put(Contract.Weather.HUMIDITY, values.getAsInteger(Contract.Weather.HUMIDITY));
-            weatherValues.put(Contract.Weather.DATE, values.getAsInteger(Contract.Weather.DATE));
-            weatherValues.put(Contract.Weather.CITY_ID, values.getAsString(Contract.Weather.CITY_ID));
-
-            mContext.getContentResolver().insert(Contract.City.CONTENT_URI, cityValues);
-            mContext.getContentResolver().insert(Contract.Weather.CONTENT_URI, weatherValues);
-        }
     }
 
     @Override
@@ -141,7 +120,7 @@ public class GeneralWeatherFragment extends Fragment implements WeatherResponseH
                 while (data.moveToNext()) {
                     citiesList.add(data.getString(nameColumnIndex));
                 }
-                mNetworkConnection = new AsyncWeatherConnection(citiesList,this);
+                mNetworkConnection = new AsyncForecastConnection(this, citiesList);
                 mNetworkConnection.execute();
                 break;
         }
@@ -156,9 +135,29 @@ public class GeneralWeatherFragment extends Fragment implements WeatherResponseH
     public void onClick(View v) {
         String name = cityName.getText().toString().trim();
         if (!name.isEmpty()) {
-            mNetworkConnection = new AsyncWeatherConnection(name, this);
+            mNetworkConnection = new AsyncForecastConnection(this, name);
             mNetworkConnection.execute();
             cityName.setText("");
+        }
+    }
+
+    @Override
+    public void handleResponse(List<ContentValues> data) {
+        ContentValues cityValues = new ContentValues();
+        ContentValues weatherValues = new ContentValues();
+        for (ContentValues values : data) {
+            cityValues.clear();
+            weatherValues.clear();
+            cityValues.put(Contract.City.NAME, values.getAsString(Contract.City.NAME));
+            cityValues.put(Contract.City._ID, values.getAsInteger(Contract.City._ID));
+            weatherValues.put(Contract.Weather.TEMPERATURE, values.getAsInteger(Contract.Weather.TEMPERATURE));
+            weatherValues.put(Contract.Weather.DESCRIPTION, values.getAsString(Contract.Weather.DESCRIPTION));
+            weatherValues.put(Contract.Weather.HUMIDITY, values.getAsInteger(Contract.Weather.HUMIDITY));
+            weatherValues.put(Contract.Weather.DATE, values.getAsInteger(Contract.Weather.DATE));
+            weatherValues.put(Contract.Weather.CITY_ID, values.getAsString(Contract.Weather.CITY_ID));
+
+            mContext.getContentResolver().insert(Contract.City.CONTENT_URI, cityValues);
+            mContext.getContentResolver().insert(Contract.Weather.CONTENT_URI, weatherValues);
         }
     }
 
@@ -185,7 +184,7 @@ public class GeneralWeatherFragment extends Fragment implements WeatherResponseH
             if (mCursor != null) {
                 mCursor.moveToPosition(position);
                 holder.cityName.setText(mCursor.getString(mCursor.getColumnIndex(Contract.City.NAME)));
-                holder.temperature.setText(mCursor.getString(mCursor.getColumnIndex(Contract.Weather.TEMPERATURE)));
+                holder.temperature.setText(mCursor.getString(mCursor.getColumnIndex(Contract.Weather.TEMPERATURE))+ " \u2103");
             }
         }
 
@@ -197,13 +196,28 @@ public class GeneralWeatherFragment extends Fragment implements WeatherResponseH
             return mCursor.getCount();
         }
 
-        public class ViewHolder extends RecyclerView.ViewHolder{
+        public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
             TextView cityName;
             TextView temperature;
             public ViewHolder(View itemView) {
                 super(itemView);
                 cityName = (TextView) itemView.findViewById(R.id.gi_city_name);
+                cityName.setOnClickListener(this);
                 temperature = (TextView) itemView.findViewById(R.id.gi_temperature);
+                temperature.setOnClickListener(this);
+            }
+
+            @Override
+            public void onClick(View v) {
+                String city = (String)cityName.getText();
+                ExtendedWeatherFragment extendedWeatherFragment = ExtendedWeatherFragment
+                        .newInstance(city);
+                FragmentManager fragmentManager = getFragmentManager();
+                fragmentManager
+                        .beginTransaction()
+                        .replace(R.id.container,extendedWeatherFragment)
+                        .addToBackStack(null)
+                        .commit();
             }
         }
     }

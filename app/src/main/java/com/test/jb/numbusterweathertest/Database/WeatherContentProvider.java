@@ -4,6 +4,7 @@ import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 
@@ -55,7 +56,20 @@ public class WeatherContentProvider extends ContentProvider {
                 weatherCursor.setNotificationUri(getContext().getContentResolver(), Contract.Weather.CONTENT_URI);
                 return weatherCursor;
             case EXTENDED_WEATHERS:
-                return null;
+                Cursor extendedWeatherCursor = sWeatherWithCitiesQueryBuilder.query(
+                        mHelper.getReadableDatabase(),
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder
+                );
+                extendedWeatherCursor.setNotificationUri(
+                        getContext().getContentResolver(),
+                        Contract.Weather.EXTENDED_CONTENT_URI
+                        );
+                return extendedWeatherCursor;
             case CITIES:
                 Cursor cityCursor = mHelper.getReadableDatabase().query(
                         Contract.City.TABLE,
@@ -87,16 +101,27 @@ public class WeatherContentProvider extends ContentProvider {
         long id;
         switch (mUriMatcher.match(uri)) {
             case CITIES:
-                id = mHelper.getWritableDatabase().insert(Contract.City.TABLE, null, values);
+                id = mHelper.getWritableDatabase().insertWithOnConflict(
+                        Contract.City.TABLE,
+                        null,
+                        values,
+                        SQLiteDatabase.CONFLICT_REPLACE
+                );
                 if (id > 0) {
                     getContext().getContentResolver().notifyChange(uri,null);
                     return Uri.withAppendedPath(uri, String.valueOf(id));
                 }
                 return Uri.withAppendedPath(uri, String.valueOf(id));
             case WEATHERS:
-                id = mHelper.getWritableDatabase().insert(Contract.Weather.TABLE, null, values);
+                id = mHelper.getWritableDatabase().insertWithOnConflict(
+                        Contract.Weather.TABLE,
+                        null,
+                        values,
+                        SQLiteDatabase.CONFLICT_REPLACE
+                );
                 if (id > 0 ) {
                     getContext().getContentResolver().notifyChange(uri,null);
+                    getContext().getContentResolver().notifyChange(Contract.Weather.EXTENDED_CONTENT_URI, null);
                     return Uri.withAppendedPath(uri, String.valueOf(id));
                 }
         }
@@ -109,7 +134,6 @@ public class WeatherContentProvider extends ContentProvider {
         switch (mUriMatcher.match(uri)) {
             case WEATHERS:
                 affectedRows = mHelper.getWritableDatabase().delete(Contract.Weather.TABLE, selection, selectionArgs);
-
                 return affectedRows;
             case CITIES:
                 affectedRows = mHelper.getWritableDatabase().delete(Contract.City.TABLE, selection, selectionArgs);

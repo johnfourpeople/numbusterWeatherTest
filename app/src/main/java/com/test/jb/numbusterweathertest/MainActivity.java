@@ -2,23 +2,22 @@ package com.test.jb.numbusterweathertest;
 
 import android.content.ContentValues;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
 import com.test.jb.numbusterweathertest.Database.Contract;
-import com.test.jb.numbusterweathertest.Network.AsyncWeatherConnection;
-import com.test.jb.numbusterweathertest.Network.WeatherResponseHandler;
+import com.test.jb.numbusterweathertest.Network.AsyncForecastConnection;
+import com.test.jb.numbusterweathertest.Network.ForecastResponseHandler;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements WeatherResponseHandler{
+public class MainActivity extends AppCompatActivity implements ForecastResponseHandler {
 
     SharedPreferences preferences = null;
-    AsyncWeatherConnection networkConnection;
+    AsyncForecastConnection networkConnection;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,16 +36,19 @@ public class MainActivity extends AppCompatActivity implements WeatherResponseHa
         super.onResume();
         if (preferences.getBoolean("defaultStart", true)) {
             String[] defaultCities = getResources().getStringArray(R.array.default_cities);
-            networkConnection = new AsyncWeatherConnection(
-                    Arrays.asList(defaultCities),
-                    this
+            networkConnection = new AsyncForecastConnection(
+                    this,
+                    Arrays.asList(defaultCities)
+
             );
             networkConnection.execute();
         }
     }
 
+
+
     @Override
-    public void responseHandling(List<ContentValues> data) {
+    public void handleResponse(List<ContentValues> data) {
         ContentValues cityValues = new ContentValues();
         ContentValues weatherValues = new ContentValues();
 

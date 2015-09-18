@@ -12,6 +12,7 @@ public final class Contract {
 
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/weather";
         public static final Uri CONTENT_URI = Uri.withAppendedPath(AUTHORITY_URI,"weathers");
+        public static final Uri EXTENDED_CONTENT_URI = Uri.withAppendedPath(AUTHORITY_URI,"extended_weathers");
 
         public static final String TABLE = "weather";
 

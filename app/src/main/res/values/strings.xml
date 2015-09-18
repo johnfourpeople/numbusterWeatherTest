@@ -3,6 +3,10 @@
 
     <string name="city_hint">Cities name</string>
     <string name="add">Add</string>
+    <string name="temperature">Temperature</string>
+    <string name="humidity">Humidity</string>
+    <string name="date">Date</string>
+    <string name="description">Description</string>
     <string-array name="default_cities">
         <item>Санкт-Петербург</item>
         <item>Москва</item>
