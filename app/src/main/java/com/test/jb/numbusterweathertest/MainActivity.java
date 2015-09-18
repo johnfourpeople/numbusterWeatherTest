@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.test.jb.numbusterweathertest.Database.Contract;
 import com.test.jb.numbusterweathertest.Network.AsyncForecastConnection;
@@ -58,7 +57,6 @@ public class MainActivity extends AppCompatActivity implements ForecastResponseH
         for (ContentValues values : data) {
             cityValues.clear();
             weatherValues.clear();
-            Log.d("mainact", values.getAsString(Contract.City.NAME));
 
             cityValues.put(Contract.City.NAME, values.getAsString(Contract.City.NAME));
             cityValues.put(Contract.City._ID, values.getAsInteger(Contract.City._ID));

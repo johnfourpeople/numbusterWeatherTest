@@ -7,4 +7,6 @@
     <string name="description">Описание</string>
     <string name="humidity">Влажность</string>
     <string name="temperature">Температура</string>
+    <string name="seven_days">7 Дней</string>
+    <string name="three_days">3 Дня</string>
 </resources>

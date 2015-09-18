@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -14,9 +13,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -54,7 +51,6 @@ public class AsyncForecastConnection extends AsyncTask<Void,Void,List<ContentVal
                 connection.setDoOutput(true);
                 connection.connect();
 
-                Log.d("bkgrnd", "connection");
                 StringBuffer buffer = new StringBuffer();
                 InputStream stream;
                 stream = connection.getInputStream();
@@ -68,13 +64,11 @@ public class AsyncForecastConnection extends AsyncTask<Void,Void,List<ContentVal
                 JsonElement root = parser.parse(buffer.toString());
                 if(root.isJsonObject()) {
                     if (root.getAsJsonObject().get("cod").getAsInt() == 200) {
-                        Log.d("sr",String.valueOf(root.getAsJsonObject().get("cod").getAsInt()));
                         int cityId = root.getAsJsonObject().get("city").getAsJsonObject().get("id").getAsInt();
                         Iterator<JsonElement> iterator = root.getAsJsonObject().get("list").getAsJsonArray().iterator();
                         while(iterator.hasNext()) {
                             JsonElement item = iterator.next();
                             int dt = item.getAsJsonObject().get("dt").getAsInt();
-                            Log.d("sr",String.valueOf(dt));
 
                             JsonObject weather = item.getAsJsonObject().get("weather").getAsJsonArray().get(0).getAsJsonObject();
                             String descr = weather.get("description").getAsString();

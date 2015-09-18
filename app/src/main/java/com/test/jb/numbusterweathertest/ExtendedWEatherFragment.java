@@ -11,7 +11,6 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,7 +37,7 @@ public class ExtendedWeatherFragment extends Fragment implements LoaderManager.L
 
     private String mCityName;
     private ExtendedWeatherAdapter mAdapter;
-    private boolean forecastRangeTrigger = true;
+    private boolean forecastRangeSwitch = false;
 
     RecyclerView forecastList;
     TextView cityName;
@@ -97,7 +96,7 @@ public class ExtendedWeatherFragment extends Fragment implements LoaderManager.L
         cityName.setText(mCityName);
 
         changeForecastRange.setOnClickListener(this);
-        changeForecastRange.setText(forecastRangeTrigger?"3 days":"7 days");
+        changeForecastRange.setText((forecastRangeSwitch ?getString(R.string.three_days):getString(R.string.seven_days)));
 
         LoaderManager loaderManager = getLoaderManager();
         loaderManager.initLoader(WEATHER_LOADER, null, this);
@@ -113,14 +112,14 @@ public class ExtendedWeatherFragment extends Fragment implements LoaderManager.L
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Log.d("create loader", Contract.Weather.DATE + " LIMIT " + (forecastRangeTrigger ? "7" : "3"));
+
         return new CursorLoader(
                 mContext,
                 Contract.Weather.EXTENDED_CONTENT_URI,
                 null,
                 Contract.City.NAME + " = ?",
                 new String[]{mCityName},
-                Contract.Weather.DATE + " LIMIT " + (forecastRangeTrigger?"8":"4"));
+                Contract.Weather.DATE + " LIMIT " + (forecastRangeSwitch ?"3":"7"));
 
     }
 
@@ -136,8 +135,8 @@ public class ExtendedWeatherFragment extends Fragment implements LoaderManager.L
 
     @Override
     public void onClick(View v) {
-        forecastRangeTrigger = ! forecastRangeTrigger;
-        changeForecastRange.setText(forecastRangeTrigger?"3 days":"7 days");
+        forecastRangeSwitch = !forecastRangeSwitch;
+        changeForecastRange.setText((forecastRangeSwitch ?getString(R.string.three_days):getString(R.string.seven_days)));
         LoaderManager loaderManager = getLoaderManager();
         loaderManager.restartLoader(WEATHER_LOADER, null, this);
     }

@@ -11,4 +11,6 @@
         <item>Санкт-Петербург</item>
         <item>Москва</item>
     </string-array>
+    <string name="three_days">3 Days</string>
+    <string name="seven_days">7 Days</string>
 </resources>
