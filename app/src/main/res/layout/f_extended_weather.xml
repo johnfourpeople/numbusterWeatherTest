@@ -9,6 +9,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true">
         <TextView
+            style="@style/BigTextItem"
             android:id="@+id/ew_city_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -28,21 +29,25 @@
         android:layout_alignParentLeft="true"
         android:layout_below="@id/ew_city_line">
         <TextView
+            style="@style/TextItem"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:text="@string/temperature"/>
         <TextView
+            style="@style/TextItem"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:text="@string/description"/>
         <TextView
+            style="@style/TextItem"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:text="@string/humidity"/>
         <TextView
+            style="@style/TextItem"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_weight="1"

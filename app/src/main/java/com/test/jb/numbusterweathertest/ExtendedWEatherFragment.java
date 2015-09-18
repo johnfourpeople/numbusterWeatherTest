@@ -120,7 +120,7 @@ public class ExtendedWeatherFragment extends Fragment implements LoaderManager.L
                 null,
                 Contract.City.NAME + " = ?",
                 new String[]{mCityName},
-                Contract.Weather.DATE + " LIMIT " + (forecastRangeTrigger?"7":"3"));
+                Contract.Weather.DATE + " LIMIT " + (forecastRangeTrigger?"8":"4"));
 
     }
 
@@ -139,7 +139,6 @@ public class ExtendedWeatherFragment extends Fragment implements LoaderManager.L
         forecastRangeTrigger = ! forecastRangeTrigger;
         changeForecastRange.setText(forecastRangeTrigger?"3 days":"7 days");
         LoaderManager loaderManager = getLoaderManager();
-        mAdapter.setCursor(null);
         loaderManager.restartLoader(WEATHER_LOADER, null, this);
     }
 
@@ -164,7 +163,7 @@ public class ExtendedWeatherFragment extends Fragment implements LoaderManager.L
                 holder.humidity.setText(mCursor.getString(mCursor.getColumnIndex(Contract.Weather.HUMIDITY)) + "%");
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTimeInMillis(mCursor.getLong(mCursor.getColumnIndex(Contract.Weather.DATE)) * 1000);
-                DateFormat formatter = new SimpleDateFormat("dd/MM HH:mm");
+                DateFormat formatter = new SimpleDateFormat("dd/MM");
 
                 holder.date.setText(formatter.format(calendar.getTime()));
             }

@@ -4,5 +4,10 @@
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
     </style>
-
+    <style name="TextItem" parent="@android:style/TextAppearance">
+        android:textSize="3dp"
+    </style>
+    <style name="BigTextItem" parent="@android:style/TextAppearance">
+        android:textSize="6dp"
+    </style>
 </resources>

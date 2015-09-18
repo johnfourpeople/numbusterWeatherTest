@@ -28,7 +28,7 @@ import java.util.List;
  */
 public class AsyncForecastConnection extends AsyncTask<Void,Void,List<ContentValues>> {
 
-    private final static String BASE_URL = "http://api.openweathermap.org/data/2.5/forecast/daily?units=metric&count=7&lang=ru&q=";
+    private final static String BASE_URL = "http://api.openweathermap.org/data/2.5/forecast/daily?units=metric&count=16&lang=ru&q=";
 
     private List<String> mCityNames = new ArrayList<>();
     private ForecastResponseHandler mHandler;

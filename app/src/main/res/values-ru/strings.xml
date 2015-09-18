@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">NumbusterWeatherTest</string>
+    <string name="add">Добавить</string>
+    <string name="city_hint">Название города</string>
+    <string name="date">Дата</string>
+    <string name="description">Описание</string>
+    <string name="humidity">Влажность</string>
+    <string name="temperature">Температура</string>
+</resources>
